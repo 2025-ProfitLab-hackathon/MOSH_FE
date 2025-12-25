@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎵 MOSH_FE
 
-## Getting Started
 
-First, run the development server:
+## 🛠 기술 스택
+
+| 분류 | 기술 |
+|:---:|:---:|
+| 프레임워크 | Next.js 16 |
+| 언어 | TypeScript |
+| 스타일링 | Tailwind CSS |
+| 상태관리 | Zustand |
+| 패키지 매니저 | pnpm |
+
+---
+
+## 시작하기
+
+### 설치
+
+```bash
+npm install
+```
+
+### 개발 서버 실행
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📝 커밋 컨벤션
 
-## Learn More
+| 태그 | 설명 |
+|:---:|:---|
+| `feat` | 새로운 기능 추가 |
+| `fix` | 버그 수정 |
+| `docs` | 문서 수정 |
+| `style` | 코드 스타일 변경 (포매팅, 세미콜론 등) |
+| `design` | UI 디자인 변경 (CSS 등) |
+| `test` | 테스트 코드 추가/수정 |
+| `refactor` | 리팩토링 |
+| `build` | 빌드 파일 수정 |
+| `ci` | CI 설정 파일 수정 |
+| `perf` | 성능 개선 |
+| `chore` | 자잘한 수정이나 빌드 업데이트 |
+| `rename` | 파일/폴더명 수정 |
+| `remove` | 파일 삭제 |
 
-To learn more about Next.js, take a look at the following resources:
+### 커밋 예시
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+feat: 로그인 기능 구현
+fix: 버튼 클릭 안되는 버그 수정
+docs: README 업데이트
+```
