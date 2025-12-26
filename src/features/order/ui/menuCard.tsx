@@ -1,20 +1,26 @@
 'use client';
 
-import { Menu } from '@/src/entities/order/types';
 import { useBasketStore } from '@/src/shared/store/useBasketStore';
 import Image from 'next/image';
+import { MenuResponse } from '@/src/lib/api';
 
 type MenuCardProps = {
-  menu: Menu;
+  menu: MenuResponse;
 };
 
 export default function MenuCard({ menu }: MenuCardProps) {
   const { items, addItem, removeItem } = useBasketStore();
-  const count = items[menu.menuId] || 0;
+  const count: number = items[menu.menuId] || 0;
 
   return (
     <div className="flex items-center justify-between p-4">
-      <Image src="/food/food1.png" alt="menu image" width={40} height={40} />
+      <Image 
+        src={menu.imageUrl || "/food/food1.png"} 
+        alt={menu.name} 
+        width={40} 
+        height={40} 
+        className="rounded-lg object-cover"
+      />
       <div className="ml-3 flex flex-1 flex-col">
         <div className="text-body-S-medium">{menu.name}</div>
         <div className="text-body-S-regular text-[var(--color-gray-600)]">
