@@ -22,7 +22,7 @@ export default function BasketMenu() {
 
   return (
     <>
-      <div className="p-4 mb-6 border border-[var(--color-gray-200)] rounded-lg overflow-hidden">
+      <div className="p-4 border border-[var(--color-gray-200)] rounded-lg overflow-hidden">
         <div className="text-heading-S-semibold">강철분식</div>
         <div className="border-t border-gray-200 my-4"></div>
         <div className="flex flex-col divide-y divide-[var(--color-gray-200)]">
@@ -31,7 +31,11 @@ export default function BasketMenu() {
           ))}
         </div>
         <div className="border-t border-gray-200 my-4"></div>
-        <div className="text-right">옵션변경</div>
+        <div className="flex justify-end w-full">
+          <div className="w-fit px-[14px] py-[7px] border border-[#ECECEC] bg-[#FAFAFA] rounded-[6px] text-body-S-medium text-[var(--color-gray-700)]">
+            옵션변경
+          </div>
+        </div>
       </div>
     </>
   );

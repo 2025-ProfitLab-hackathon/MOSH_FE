@@ -13,7 +13,7 @@ export default function ReceiveMethod() {
 
   return (
     <>
-      <div className="mb-6 bg-[var(--color-gray-100)] rounded-xl p-4">
+      <div className="bg-[var(--color-gray-100)] rounded-xl p-4">
         <div className="flex flex-col gap-3">
           <div className="text-body-M-semibold">수령 방법</div>
 
@@ -52,7 +52,7 @@ export default function ReceiveMethod() {
                   Fast Order
                 </Label>
               </div>
-              <Badge className="bg-[var(--color-mint-100)] text-[var(--color-mint-600)] border-none rounded-[6px]">
+              <Badge className="text-white bg-[var(--color-pink-500)] border-none rounded-[6px]">
                 {pickupTime}
               </Badge>
             </div>
