@@ -1,102 +1,108 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import GreyRightIcon from '@/public/order/grey-right.svg';
-import GreyStarIcon from '@/public/order/grey-star.svg';
-import VolumeIcon from '@/public/order/volume.svg';
+import {Badge} from '@/components/ui/badge';
 import MenuCard from '@/src/features/order/ui/menuCard';
-import { OrderDrawerButton } from '@/src/features/order/ui/orderDrawerButton';
+import {OrderDrawerButton} from '@/src/features/order/ui/orderDrawerButton';
 import ReviewSlider from '@/src/features/order/ui/reviewSlider';
-import { booth } from '@/src/mocks/booth';
-import { menus } from '@/src/mocks/menu';
-import { BOOTH_TYPE_LABEL } from '@/src/shared/constants/boothType';
+import {booth} from '@/src/mocks/booth';
+import {menus} from '@/src/mocks/menu';
+import {BOOTH_TYPE_LABEL} from '@/src/shared/constants/boothType';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
+import {useSearchParams, useRouter} from 'next/navigation';
+import React from "react";
+import BottomNav from "@/src/shared/ui/BottomNav";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faAngleRight, faVolumeLow} from "@fortawesome/free-solid-svg-icons";
+
 
 export default function OrderPage() {
-  const searchParams = useSearchParams();
-  const boothId = searchParams.get('boothId');
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const boothId = searchParams.get('boothId');
 
-  return (
-    <>
-      <div className="relative px-4 pb-24">
-        <div className="flex items-start justify-between">
-          <Image src="/window.svg" alt="booth image" width={40} height={94} />
-          <Badge className="px-[14px] py-[6px] rounded-full border border-color-gray-400 bg-white text-caption-M-medium text-[var(--color-gray-1000)]">
-            영업 중
-          </Badge>
-        </div>
+    return (
+        <>
+            <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50">
+                <div className="max-w-[430px] mx-auto flex items-center px-4 py-4">
+                    <button onClick={() => router.back()} className="p-2">
+                        <svg width="10" height="18" viewBox="0 0 10 18" fill="none">
+                            <path d="M9 1L1 9L9 17" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    </button>
+                    <h1 className="flex-1 text-center text-lg font-semibold pr-10">주문 하기</h1>
+                </div>
+            </header>
 
-        <div className="mt-2"></div>
-        <div className="mt-2 flex items-start justify-between gap-4">
-          <div className="flex gap-2">
-            <Badge className="text-caption-M-medium px-2 py-1 rounded-[6px] bg-[var(--color-mint-100)] text-[var(--color-mint-600)]">
-              {BOOTH_TYPE_LABEL[booth.type]}
-            </Badge>
-            <div className="text-heading-S-semibold">{booth.title}</div>
-          </div>
+            <div className="relative px-4 pb-40 overflow-y-auto">
+                <div className="mt-20">
+                </div>
+                <div className="mt-4 flex items-start justify-between">
+                    <div className="flex-1">
+                        <h1 className="text-xl font-bold mb-2">{booth.title}</h1>
+                        <div className="flex flex-col gap-1 text-sm text-gray-600">
+                            <div className="flex gap-2">
+                                <span className="text-gray-500">시간</span>
+                                <span>{booth.startAt} ~ {booth.endAt}</span>
+                            </div>
+                            <div className="flex gap-2">
+                                <span className="text-gray-500">장소</span>
+                                <span>{booth.place}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <img src="/food/food1.png" alt="food" className="w-24 h-24 rounded-lg object-cover"/>
+                </div>
+                <div className="flex rounded-xl gap-2 mt-3 border border-blue-300 bg-blue-50 py-4 px-3">
+                    <FontAwesomeIcon icon={faVolumeLow} className="text-blue-500 text-2xl"/>
+                    <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-blue-600">
+                            패스트패스로 구매 시 빠른 수령 가능합니다.
+                        </span>
+                        <span className="text-xs text-blue-600">
+                            일반 구매 시 20분 소요됩니다.
+                        </span>
+                    </div>
+                </div>
 
-          <div className="flex flex-col gap-1 text-caption-M-regular mr-10">
-            <div className="grid grid-cols-[auto_1fr] gap-2">
-              <span className="text-[#767676]">시간</span>
-              <span>
-                {booth.startAt} ~ {booth.endAt}
-              </span>
+                {/* 구분선 */}
+                <div className="border-t border-gray-200 mt-6 mb-4"></div>
+
+                {/* 리뷰 섹션 */}
+                <div className="mb-2 flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                        <span className="font-medium">리뷰({booth.totalReviewCount})</span>
+                    </div>
+                    <div className="flex items-center">
+                        <button className="text-sm text-gray-500 flex items-center">
+                            전체보기
+                            <FontAwesomeIcon icon={faAngleRight}/>
+                        </button>
+                    </div>
+                </div>
+
+                {/* 리뷰 슬라이더 */}
+                <div className="mt-4 -mx-4">
+                    <div className="pl-4 overflow-hidden">
+                        <ReviewSlider/>
+                    </div>
+                </div>
+
+                {/* 구분선 */}
+                <div className="border-t border-gray-200 mt-6 mb-4"></div>
+
+                {/* 메뉴 섹션 */}
+                <div className="mt-4">
+                    <h2 className="text-lg font-bold mb-4">메뉴</h2>
+                    {menus.items.map((menu) => (
+                        <MenuCard key={menu.menuId} menu={menu}/>
+                    ))}
+                </div>
             </div>
-            <div className="grid grid-cols-[auto_1fr] gap-2">
-              <span className="text-[#767676]">장소</span>
-              <span>{booth.place}</span>
-            </div>
-          </div>
-        </div>
-        <div className="flex rounded-xl gap-2 mt-3 border border-[var(--color-blue-300)] bg-[var(--color-blue-100)] py-4 px-2 rounded">
-          <VolumeIcon />
-          <div className="flex flex-col">
-            <span className="text-body-S-semibold text-[var(--color-blue-600)]">
-              패스트패스로 구매 시 빠른 수령 가능합니다.
-            </span>
-            <span className="text-caption-M-regular text-[var(--color-blue-600)]">
-              일반 구매 시 20분 소요됩니다.
-            </span>
-          </div>
-        </div>
 
-        <div className="mt-6">
-          <div className="mb-2 flex items-center justify-between">
-            <div className="flex">
-              <div className="text-body-M-medium">
-                리뷰({booth.totalReviewCount})
-              </div>
-              <div className="mt-1 ml-[6px] mr-[2px]">
-                <GreyStarIcon />
-              </div>
-              <div className="text-caption-M-regular text-[var(--color-gray-700)]">
-                {booth.avgReviewRating}점
-              </div>
-            </div>
-            <div className="flex">
-              <button className="text-caption-M-regular text-[var(--color-gray-600)]">
-                전체보기
-              </button>
-              <GreyRightIcon />
-            </div>
-          </div>
-        </div>
+            {/* 주문하기 버튼 - 하단 고정 */}
+            <OrderDrawerButton title={booth.title}/>
 
-        <div className="mt-6 -mx-4">
-          <div className="pl-4 overflow-hidden">
-            <ReviewSlider />
-          </div>
-        </div>
-
-        <div className="mt-[21px]">
-          <div className="mb-2 text-heading-L-medium">메뉴</div>
-          {menus.items.map((menu) => (
-            <MenuCard key={menu.menuId} menu={menu} />
-          ))}
-        </div>
-        <OrderDrawerButton title={booth.title} />
-      </div>
-    </>
-  );
+            <BottomNav/>
+        </>
+    );
 }

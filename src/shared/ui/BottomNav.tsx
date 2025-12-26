@@ -32,7 +32,6 @@ const BottomNav = () => {
             // name: '채팅',
             path: '/chat',
             icon: (active: boolean) => (
-
                 <FontAwesomeIcon icon={faMessage} className="text-xl" />
             ),
         },
@@ -49,7 +48,9 @@ const BottomNav = () => {
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
             <div className="max-w-[430px] mx-auto flex justify-around items-center h-16">
                 {navItems.map((item) => {
-                    const isActive = pathname === item.path;
+                    // /order 경로일 때 /booth 탭 활성화
+                    const isActive = pathname === item.path || 
+                        (item.path === '/booth' && pathname.startsWith('/order'));
                     return (
                         <button
                             key={item.path}
@@ -59,7 +60,6 @@ const BottomNav = () => {
                             }`}
                         >
                             {item.icon(isActive)}
-                            <span className="text-xs">{item.name}</span>
                         </button>
                     );
                 })}

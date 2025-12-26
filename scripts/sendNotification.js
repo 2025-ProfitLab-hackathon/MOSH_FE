@@ -41,11 +41,11 @@ async function sendNotification() {
                     type: '음식',
                     url: '/home/alarm',
                 },
-                webpush: {
-                    notification: {
-                        icon: '/icons/icon-192x192.png',
-                    },
-                },
+                // webpush: {
+                //     notification: {
+                //         icon: '/icons/icon-192x192.png',
+                //     },
+                // },
             },
         };
 
