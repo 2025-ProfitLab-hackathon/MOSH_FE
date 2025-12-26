@@ -5,10 +5,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faReceipt, faMessage, faUser } from '@fortawesome/free-solid-svg-icons';
 
-
-
-
-
 const BottomNav = () => {
     const router = useRouter();
     const pathname = usePathname();
