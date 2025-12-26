@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import RewardModal from './RewardModal';
 
 const TicketNumberInput = () => {
     const [ticketNumber, setTicketNumber] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleBack = () => {
         console.log('뒤로가기');
@@ -17,6 +19,14 @@ const TicketNumberInput = () => {
 
     const handleSubmit = () => {
         console.log('티켓번호:', ticketNumber);
+        // 모달 열기
+        setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+        // TODO: 다음 페이지로 이동
+        console.log('가입 완료!');
     };
 
     // 입력값이 있을 때만 버튼 활성화
@@ -93,6 +103,13 @@ const TicketNumberInput = () => {
                     가입하기
                 </Button>
             </div>
+
+            {/* 리워드 지급 완료 모달 */}
+            <RewardModal
+                isOpen={isModalOpen}
+                onClose={handleModalClose}
+                points={3000}
+            />
         </div>
     );
 };
