@@ -85,7 +85,6 @@ const LoginForm = () => {
             <div className="text-gray-500 text-[14px]">로그인 시 페스티벌앱의 서비스 이용 약관과</div>
             <div className="text-gray-500 text-[14px]">개인정보 취급방침에 동의하게 됩니다.</div>
 
-            {/* 약관 동의 모달 */}
             <AgreementModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
