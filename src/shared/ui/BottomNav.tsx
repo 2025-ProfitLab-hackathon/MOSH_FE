@@ -55,7 +55,7 @@ const BottomNav = () => {
                             key={item.path}
                             onClick={() => router.push(item.path)}
                             className={`flex flex-col items-center justify-center gap-1 w-16 h-full ${
-                                isActive ? 'text-pink-400' : 'text-gray-500'
+                                isActive ? 'text-pink-400 bg-pink-50' : 'text-gray-500' 
                             }`}
                         >
                             {item.icon(isActive)}
