@@ -1,3 +1,4 @@
+import { menus } from '@/src/mocks/menu';
 import { create } from 'zustand';
 
 interface BasketState {
@@ -6,6 +7,7 @@ interface BasketState {
   removeItem: (menuId: number) => void;
   setItem: (menuId: number, count: number) => void;
   totalCount: () => number;
+  totalPrice: () => number;
 }
 
 export const useBasketStore = create<BasketState>((set, get) => ({
@@ -26,5 +28,16 @@ export const useBasketStore = create<BasketState>((set, get) => ({
   totalCount: () => {
     const items = get().items;
     return Object.values(items).reduce((sum, count) => sum + count, 0);
+  },
+  totalPrice: () => {
+    const items = get().items;
+    let sum = 0;
+    Object.entries(items).forEach(([menuId, count]) => {
+      const menu = menus.items.find((m) => m.menuId === Number(menuId));
+      if (menu) {
+        sum += menu.price * count;
+      }
+    });
+    return sum;
   },
 }));
