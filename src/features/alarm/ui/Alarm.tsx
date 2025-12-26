@@ -30,7 +30,7 @@ const initialNotifications: Notification[] = [
     {
         id: 3,
         type: '공연',
-        message: '12월 25일 Someday Christmas 관람일입니다.',
+        message: '12월 25일 Someday Christmas 관람일입니다. 감사합니다.',
         date: '2025-12-25 00:00',
     },
     {
