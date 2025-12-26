@@ -1,3 +1,7 @@
 export default function BoothPage() {
-  return <div>BoothPage</div>;
+  return (
+    <>
+      <div className="text-heading-S-medium">BoothPage</div>
+    </>
+  );
 }
