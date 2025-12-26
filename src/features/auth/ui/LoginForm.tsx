@@ -73,8 +73,9 @@ const LoginForm = () => {
                 });
             }, 1000);
             
-        } catch (err: any) {
-            setError(err.message || '인증번호 발송에 실패했습니다.');
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : '인증번호 발송에 실패했습니다.';
+            setError(errorMessage);
         } finally {
             setIsLoading(false);
         }
@@ -105,8 +106,9 @@ const LoginForm = () => {
                 setStep('signup');
             }
             
-        } catch (err: any) {
-            setError(err.message || '인증번호가 일치하지 않습니다.');
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : '인증번호가 일치하지 않습니다.';
+            setError(errorMessage);
             setIsLoading(false);
         }
     };
@@ -126,7 +128,7 @@ const LoginForm = () => {
             login(response.accessToken, response.user);
             router.push('/home');
             
-        } catch (err: any) {
+        } catch (err: unknown) {
             // 로그인 실패 - 계정이 없는 경우
             setError('계정을 찾을 수 없습니다. 회원가입을 진행해주세요.');
             setStep('signup');
@@ -162,8 +164,9 @@ const LoginForm = () => {
             // 홈으로 이동
             router.push('/home');
             
-        } catch (err: any) {
-            setError(err.message || '회원가입에 실패했습니다.');
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : '회원가입에 실패했습니다.';
+            setError(errorMessage);
         } finally {
             setIsLoading(false);
         }

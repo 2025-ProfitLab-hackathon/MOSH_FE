@@ -59,9 +59,10 @@ const MyPageDetailForm = () => {
                 // store 업데이트
                 setUser(userData);
                 
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error('사용자 정보 조회 실패:', err);
-                setError(err.message || '정보를 불러오는데 실패했습니다.');
+                const errorMessage = err instanceof Error ? err.message : '정보를 불러오는데 실패했습니다.';
+                setError(errorMessage);
             } finally {
                 setLoading(false);
             }
@@ -105,9 +106,10 @@ const MyPageDetailForm = () => {
             alert('저장되었습니다!');
             router.back();
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('저장 실패:', err);
-            setError(err.message || '저장에 실패했습니다.');
+            const errorMessage = err instanceof Error ? err.message : '저장에 실패했습니다.';
+            setError(errorMessage);
         } finally {
             setSaving(false);
         }

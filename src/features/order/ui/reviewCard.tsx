@@ -4,7 +4,7 @@ type ReviewCardProps = {
   name: string;
   rating: number;
   content: string;
-  image: string;
+  image?: string;
 };
 
 export default function ReviewCard({
@@ -34,15 +34,17 @@ export default function ReviewCard({
           {content}
         </p>
       </div>
-      <div className="w-[62px] flex-shrink-0 pr-2 flex items-center">
-        <Image
-          src={image}
-          alt="review image"
-          width={62}
-          height={60}
-          className="object-cover rounded-r-xl"
-        />
-      </div>
+      {image && (
+        <div className="w-[62px] flex-shrink-0 pr-2 flex items-center">
+          <Image
+            src={image}
+            alt="review image"
+            width={62}
+            height={60}
+            className="object-cover rounded-r-xl"
+          />
+        </div>
+      )}
     </div>
   );
 }
