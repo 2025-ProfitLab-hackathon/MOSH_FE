@@ -109,7 +109,7 @@ export default function OrderPage() {
       </div>
 
       {/* 주문하기 버튼 - 하단 고정 */}
-      <OrderDrawerButton title={booth.title} />
+      <OrderDrawerButton title={booth.title} boothId={booth.boothId} />
 
       <BottomNav />
     </>

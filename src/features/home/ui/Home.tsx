@@ -1,47 +1,166 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import BottomNav from "@/src/shared/ui/BottomNav";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faHeart as faHeartOutline } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
-
-// 더미 데이터
-const festivalInfo = {
-    title: '2025 Someday Christmas - 부산',
-    doorOpen: '11:30',
-    image: '/festival/christmas.png',
-};
-
-const dates = [
-    { date: '12.25', day: '목', isSelected: true },
-    { date: '12.27', day: '일', isSelected: false },
-];
-
-const timetableData = [
-    { id: 1, time: '13:00', name: '프랭클리 FRankly', startTime: '13:00', endTime: '13:40', duration: 40 },
-    { id: 2, time: '14:00', name: 'shininryu 신인류', startTime: '13:40', endTime: '14:30', duration: 40 },
-    { id: 3, time: '15:00', name: 'Dragon Pony', startTime: '14:30', endTime: '15:20', duration: 50 },
-    { id: 4, time: '16:00', name: 'Dasutt 다섯', startTime: '15:20', endTime: '16:10', duration: 50 },
-    { id: 5, time: '16:00', name: '나상현씨밴드', startTime: '16:10', endTime: '17:00', duration: 50 },
-    { id: 6, time: '17:00', name: 'I.M 아이엠', startTime: '17:00', endTime: '17:40', duration: 40 },
-    { id: 7, time: '18:00', name: '유다빈밴드 YdBB', startTime: '17:40', endTime: '18:40', duration: 60 },
-    { id: 8, time: '19:00', name: 'OWALLOIL 오월오일', startTime: '18:40', endTime: '19:40', duration: 60 },
-    { id: 9, time: '20:00', name: '데이먼스 이어', startTime: '19:40', endTime: '20:40', duration: 60 },
-];
+import { festivalApi, alarmApi, FestivalResponse, PerformanceResponse } from '@/src/lib/api';
 
 const Home = () => {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<'timetable' | 'myfestival'>('timetable');
-    const [selectedDate, setSelectedDate] = useState('12.25');
-    const [likedItems, setLikedItems] = useState<number[]>([2, 6]);
+    const [selectedDate, setSelectedDate] = useState<string>('');
+    const [likedItems, setLikedItems] = useState<string[]>([]);
+    
+    // API 데이터
+    const [festival, setFestival] = useState<FestivalResponse | null>(null);
+    const [performances, setPerformances] = useState<PerformanceResponse[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const toggleLike = (id: number) => {
-        setLikedItems(prev => 
-            prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
-        );
+    // 축제 및 타임테이블 데이터 조회
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                // 축제 목록 조회 (첫 번째 축제 사용)
+                const festivalsResponse = await festivalApi.getList({ size: 1 });
+                
+                if (festivalsResponse.content.length === 0) {
+                    setError('등록된 축제가 없습니다.');
+                    setLoading(false);
+                    return;
+                }
+
+                const festivalData = festivalsResponse.content[0];
+                setFestival(festivalData);
+
+                // 타임테이블 조회
+                const timetableResponse = await festivalApi.getTimetable(festivalData.festivalId);
+                setPerformances(timetableResponse.items);
+
+                // 첫 번째 날짜 선택
+                if (timetableResponse.items.length > 0) {
+                    const firstDate = formatDateKey(timetableResponse.items[0].startAt);
+                    setSelectedDate(firstDate);
+                }
+
+            } catch (err: any) {
+                console.error('데이터 조회 실패:', err);
+                setError(err.message || '데이터를 불러오는데 실패했습니다.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    // 날짜 키 생성 (YYYY-MM-DD)
+    const formatDateKey = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return date.toISOString().split('T')[0];
     };
+
+    // 날짜 표시 포맷 (MM.DD)
+    const formatDateDisplay = (dateStr: string) => {
+        const date = new Date(dateStr);
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${month}.${day}`;
+    };
+
+    // 요일 구하기
+    const getDayName = (dateStr: string) => {
+        const days = ['일', '월', '화', '수', '목', '금', '토'];
+        const date = new Date(dateStr);
+        return days[date.getDay()];
+    };
+
+    // 시간 포맷 (HH:mm)
+    const formatTime = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
+    };
+
+    // 시간대 표시 (13:00 형태)
+    const formatHourDisplay = (dateStr: string) => {
+        const date = new Date(dateStr);
+        const hour = date.getHours().toString().padStart(2, '0');
+        return `${hour}:00`;
+    };
+
+    // 공연 시간 (분)
+    const getDuration = (startAt: string, endAt: string) => {
+        const start = new Date(startAt);
+        const end = new Date(endAt);
+        return Math.round((end.getTime() - start.getTime()) / 60000);
+    };
+
+    // 날짜별 그룹화
+    const dateGroups = performances.reduce((acc, perf) => {
+        const dateKey = formatDateKey(perf.startAt);
+        if (!acc.includes(dateKey)) {
+            acc.push(dateKey);
+        }
+        return acc;
+    }, [] as string[]);
+
+    // 선택된 날짜의 공연 필터링
+    const filteredPerformances = performances
+        .filter(perf => formatDateKey(perf.startAt) === selectedDate)
+        .sort((a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime());
+
+    // 좋아요 토글
+    const toggleLike = async (performanceId: string) => {
+        if (likedItems.includes(performanceId)) {
+            setLikedItems(prev => prev.filter(id => id !== performanceId));
+        } else {
+            setLikedItems(prev => [...prev, performanceId]);
+            
+            // 알림 설정 API 호출
+            if (festival) {
+                try {
+                    await alarmApi.create({
+                        festivalId: festival.festivalId,
+                        performanceId,
+                        notifyMinutesBefore: 20,
+                    });
+                } catch (err) {
+                    console.error('알림 설정 실패:', err);
+                }
+            }
+        }
+    };
+
+    // 로딩 상태
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-400"></div>
+            </div>
+        );
+    }
+
+    // 에러 상태
+    if (error) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center px-4">
+                <p className="text-red-500 mb-4">{error}</p>
+                <button 
+                    onClick={() => window.location.reload()}
+                    className="px-6 py-3 bg-pink-400 text-white rounded-full"
+                >
+                    다시 시도
+                </button>
+                <BottomNav />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-white pb-20">
@@ -78,75 +197,143 @@ const Home = () => {
             </div>
 
             {/* 축제 정보 카드 */}
-            <div className="px-4 py-4">
-                <div className="flex items-center gap-4">
-                    <img src="/booth/some.png" alt="포스터" className="w-18 h-20 object-cover" />
-                    <div>
-                        <h2 className="font-semibold text-lg">{festivalInfo.title}</h2>
-                        <p className="text-gray-500 text-sm">Door open {festivalInfo.doorOpen}</p>
+            {festival && (
+                <div className="px-4 py-4">
+                    <div className="flex items-center gap-4">
+                        <img src="/booth/some.png" alt="포스터" className="w-18 h-20 object-cover rounded-lg" />
+                        <div>
+                            <h2 className="font-semibold text-lg">{festival.title}</h2>
+                            <p className="text-gray-500 text-sm">
+                                {formatDateDisplay(festival.startAt)} ~ {formatDateDisplay(festival.endAt)}
+                            </p>
+                            <p className="text-gray-500 text-sm">{festival.place}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* 날짜 선택 */}
-            <div className="flex gap-2 px-4 pb-4">
-                {dates.map((item) => (
+            <div className="flex gap-2 px-4 pb-4 overflow-x-auto">
+                {dateGroups.map((dateKey) => (
                     <button
-                        key={item.date}
-                        onClick={() => setSelectedDate(item.date)}
-                        className={`px-4 py-2 rounded-full text-sm font-medium ${
-                            selectedDate === item.date
+                        key={dateKey}
+                        onClick={() => setSelectedDate(dateKey)}
+                        className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+                            selectedDate === dateKey
                                 ? 'bg-pink-400 text-white'
                                 : 'bg-white text-gray-700 border border-gray-300'
                         }`}
                     >
-                        {item.date}({item.day})
+                        {formatDateDisplay(dateKey)}({getDayName(dateKey)})
                     </button>
                 ))}
             </div>
 
             {/* 타임테이블 */}
-            <div className="bg-gray-50 px-4 py-4">
-                {timetableData.map((item, index) => {
-                    const showTime = index === 0 || timetableData[index - 1].time !== item.time;
-                    
-                    return (
-                        <div key={item.id} className="flex mb-2">
-                            {/* 시간 */}
-                            <div className="w-12 flex-shrink-0 text-sm text-pink-400 pt-3">
-                                {showTime && item.time}
-                            </div>
-                            
-                            {/* 이벤트 카드 - index로 번갈아가면서 색상 */}
-                            {(() => {
-                                const isPink = index % 2 === 0;
-                                return (
+            {activeTab === 'timetable' && (
+                <div className="bg-gray-50 px-4 py-4">
+                    {filteredPerformances.length === 0 ? (
+                        <div className="text-center py-10 text-gray-500">
+                            해당 날짜에 공연이 없습니다.
+                        </div>
+                    ) : (
+                        filteredPerformances.map((item, index) => {
+                            const showTime = index === 0 || 
+                                formatHourDisplay(filteredPerformances[index - 1].startAt) !== formatHourDisplay(item.startAt);
+                            const isPink = index % 2 === 0;
+                            const duration = getDuration(item.startAt, item.endAt);
+
+                            return (
+                                <div key={item.performanceId} className="flex mb-2">
+                                    {/* 시간 */}
+                                    <div className="w-14 flex-shrink-0 text-sm text-pink-400 pt-3">
+                                        {showTime && formatHourDisplay(item.startAt)}
+                                    </div>
+                                    
+                                    {/* 이벤트 카드 */}
                                     <div
                                         className={`flex-1 rounded-xl p-4 flex items-center justify-between ${
                                             isPink ? 'bg-pink-100' : 'bg-pink-400'
                                         }`}
                                     >
-                                        <div>
+                                        <div className="flex-1">
                                             <p className={`font-medium ${isPink ? 'text-pink-900 font-bold' : 'text-white'}`}>
-                                                {item.name}
+                                                {item.title}
                                             </p>
                                             <p className={`text-sm ${isPink ? 'text-pink-800' : 'text-white'}`}>
-                                                {item.startTime} - {item.endTime} ({item.duration})
+                                                {formatTime(item.startAt)} - {formatTime(item.endAt)} ({duration}분)
+                                            </p>
+                                            <p className={`text-xs mt-1 ${isPink ? 'text-pink-600' : 'text-pink-100'}`}>
+                                                {item.stage}
                                             </p>
                                         </div>
-                                        <button onClick={() => toggleLike(item.id)}>
+                                        <button onClick={() => toggleLike(item.performanceId)} className="ml-2">
                                             <FontAwesomeIcon 
-                                                icon={likedItems.includes(item.id) ? faHeartSolid : faHeartOutline} 
+                                                icon={likedItems.includes(item.performanceId) ? faHeartSolid : faHeartOutline} 
                                                 className={`text-xl ${isPink ? 'text-pink-400' : 'text-white'}`}
                                             />
                                         </button>
                                     </div>
-                                );
-                            })()}
+                                </div>
+                            );
+                        })
+                    )}
+                </div>
+            )}
+
+            {/* My Festival 탭 */}
+            {activeTab === 'myfestival' && (
+                <div className="bg-gray-50 px-4 py-4">
+                    {likedItems.length === 0 ? (
+                        <div className="text-center py-10 text-gray-500">
+                            <FontAwesomeIcon icon={faHeartOutline} className="text-4xl text-gray-300 mb-3" />
+                            <p>하트를 눌러 관심 공연을 추가해보세요!</p>
                         </div>
-                    );
-                })}
-            </div>
+                    ) : (
+                        performances
+                            .filter(perf => likedItems.includes(perf.performanceId))
+                            .sort((a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime())
+                            .map((item, index) => {
+                                const isPink = index % 2 === 0;
+                                const duration = getDuration(item.startAt, item.endAt);
+
+                                return (
+                                    <div key={item.performanceId} className="flex mb-2">
+                                        {/* 날짜 */}
+                                        <div className="w-14 flex-shrink-0 text-sm text-pink-400 pt-3">
+                                            {formatDateDisplay(item.startAt)}
+                                        </div>
+                                        
+                                        {/* 이벤트 카드 */}
+                                        <div
+                                            className={`flex-1 rounded-xl p-4 flex items-center justify-between ${
+                                                isPink ? 'bg-pink-100' : 'bg-pink-400'
+                                            }`}
+                                        >
+                                            <div className="flex-1">
+                                                <p className={`font-medium ${isPink ? 'text-pink-900 font-bold' : 'text-white'}`}>
+                                                    {item.title}
+                                                </p>
+                                                <p className={`text-sm ${isPink ? 'text-pink-800' : 'text-white'}`}>
+                                                    {formatTime(item.startAt)} - {formatTime(item.endAt)} ({duration}분)
+                                                </p>
+                                                <p className={`text-xs mt-1 ${isPink ? 'text-pink-600' : 'text-pink-100'}`}>
+                                                    {item.stage}
+                                                </p>
+                                            </div>
+                                            <button onClick={() => toggleLike(item.performanceId)} className="ml-2">
+                                                <FontAwesomeIcon 
+                                                    icon={faHeartSolid} 
+                                                    className={`text-xl ${isPink ? 'text-pink-400' : 'text-white'}`}
+                                                />
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                    )}
+                </div>
+            )}
 
             <BottomNav />
         </div>
