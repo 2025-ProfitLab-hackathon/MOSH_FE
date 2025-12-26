@@ -15,7 +15,7 @@ export default function BasketMenu() {
       {
         ...menuInfo,
         count,
-        totalPrice: menuInfo.price * count,
+        totalPrice: Number(menuInfo.price) * Number(count),
       },
     ];
   });
