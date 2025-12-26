@@ -4,7 +4,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 export default function PaymentMethod() {
   return (
     <>
-      <div className="mt-6 mb-3 text-body-L-semibold">결제 수단</div>
+      <div className="mb-3 text-body-L-semibold">결제 수단</div>
       <RadioGroup defaultValue="option-one">
         <div className="flex items-center space-x-2">
           <RadioGroupItem
