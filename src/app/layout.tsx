@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'MOSH - 기다림은 짧게, 즐거움은 길게!',
   description: '페스티벌 앱 MOSH',
+  manifest: '/manifest.json',
 };
 
 export const viewport: Viewport = {
