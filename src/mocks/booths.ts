@@ -7,7 +7,7 @@ export const booths = {
     {
       boothId: 101,
       festivalId: 1,
-      title: '청춘 닭강정',
+      title: '마늘 떡볶이',
       place: '푸드존 B-2',
       type: 'F&B' as const,
       startAt: '2025-12-26',

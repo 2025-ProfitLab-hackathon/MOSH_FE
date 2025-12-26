@@ -73,8 +73,10 @@ const ChatBotForm = () => {
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col">
             {/* 헤더 - 상단 고정 */}
-            <header className="fixed top-0 left-0 right-0 bg-white flex items-center justify-center px-4 py-4 border-b border-gray-200 z-50">
-                <h1 className="text-lg font-semibold">부스 탐색</h1>
+            <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50">
+                <div className="max-w-[430px] mx-auto flex items-center justify-center px-4 py-4">
+                    <h1 className="text-lg font-semibold">부스 탐색</h1>
+                </div>
             </header>
 
             {/* 채팅 메시지 영역 - 헤더 높이만큼 pt 추가 */}

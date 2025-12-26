@@ -19,7 +19,7 @@ export default function BoothCard({ booth }: BoothCardProps) {
   };
   return (
     <div className="border border-[#E5E5E5] rounded-2xl flex items-center justify-between p-4">
-      <Image src="/window.svg" alt="v13 image" width={40} height={94} />
+      <Image src="/food/food1.png" alt="v13 image" width={80} height={80} />
       <div className="flex flex-col gap-1 flex-1 mx-4">
         <div className="flex gap-[6px]">
           <Badge className="px-2 py-1 rounded-[6px] bg-[var(--color-mint-100)] text-[var(--color-mint-600)] ">
