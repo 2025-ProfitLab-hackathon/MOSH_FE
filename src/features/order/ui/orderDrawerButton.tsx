@@ -1,7 +1,14 @@
 import { Button } from '@/components/ui/button';
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
 import { menus } from '@/src/mocks/menu';
 import { useBasketStore } from '@/src/shared/store/useBasketStore';
+import { useRouter } from 'next/navigation';
 
 interface OrderDrawerButtonProps {
   title: string;
@@ -9,6 +16,7 @@ interface OrderDrawerButtonProps {
 
 export function OrderDrawerButton({ title }: OrderDrawerButtonProps) {
   const { items, totalCount, totalPrice } = useBasketStore();
+  const router = useRouter();
 
   const basketItems = Object.entries(items)
     .filter(([_, count]) => count > 0)
@@ -35,6 +43,9 @@ export function OrderDrawerButton({ title }: OrderDrawerButtonProps) {
         </DrawerTrigger>
 
         <DrawerContent className="mx-auto w-full max-w-[430px]">
+          <DrawerHeader className="sr-only">
+            <DrawerTitle>{title}</DrawerTitle>
+          </DrawerHeader>
           <div className="p-4">
             <div className="text-heading-S-semibold mb-4">{title}</div>
             {basketItems.map((item) => (
@@ -66,7 +77,10 @@ export function OrderDrawerButton({ title }: OrderDrawerButtonProps) {
               >
                 이전으로
               </Button>
-              <Button className="h-12 flex-1 px-7 py-3 text-white bg-[var(--color-pink-400)]">
+              <Button
+                onClick={() => router.push(`/payment`)}
+                className="h-12 flex-1 px-7 py-3 text-white bg-[var(--color-pink-400)]"
+              >
                 주문하기
               </Button>
             </div>
