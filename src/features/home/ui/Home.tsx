@@ -49,9 +49,10 @@ const Home = () => {
                     setSelectedDate(firstDate);
                 }
 
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error('데이터 조회 실패:', err);
-                setError(err.message || '데이터를 불러오는데 실패했습니다.');
+                const errorMessage = err instanceof Error ? err.message : '데이터를 불러오는데 실패했습니다.';
+                setError(errorMessage);
             } finally {
                 setLoading(false);
             }

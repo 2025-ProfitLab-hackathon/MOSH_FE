@@ -84,7 +84,7 @@ const ChatBotForm = () => {
             };
             setMessages(prev => [...prev, botMessage]);
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('메시지 전송 실패:', err);
 
             // 에러 시 폴백 응답
@@ -95,7 +95,7 @@ const ChatBotForm = () => {
                 timestamp: formatTime(new Date()),
             };
             setMessages(prev => [...prev, errorMessage]);
-            setError(err.message);
+            setError(err instanceof Error ? err.message : '알 수 없는 오류');
 
             // 세션 초기화 (다음 메시지에서 새 세션 생성)
             setConversationId(null);
