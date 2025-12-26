@@ -1,0 +1,30 @@
+export const booths = {
+  page: 0,
+  size: 20,
+  totalElements: 2,
+  totalPages: 1,
+  content: [
+    {
+      boothId: 101,
+      festivalId: 1,
+      title: '청춘 닭강정',
+      place: '푸드존 B-2',
+      type: 'F&B' as const,
+      startAt: '2025-12-26',
+      endAt: '2025-12-26',
+      totalReviewCount: 240,
+      avgReviewRating: 4.8,
+    },
+    {
+      boothId: 201,
+      festivalId: 1,
+      title: '페스티벌 한정 티셔츠',
+      place: '굿즈존 G-1',
+      type: 'MD' as const,
+      startAt: '2025-12-26',
+      endAt: '2025-12-26',
+      totalReviewCount: 78,
+      avgReviewRating: 4.4,
+    },
+  ],
+};
