@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import BottomNav from "@/src/shared/ui/BottomNav";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faHeart as faHeartOutline } from '@fortawesome/free-regular-svg-icons';
@@ -31,6 +32,7 @@ const timetableData = [
 ];
 
 const Home = () => {
+    const router = useRouter();
     const [activeTab, setActiveTab] = useState<'timetable' | 'myfestival'>('timetable');
     const [selectedDate, setSelectedDate] = useState('12.25');
     const [likedItems, setLikedItems] = useState<number[]>([2, 6]);
@@ -46,7 +48,7 @@ const Home = () => {
             {/* 헤더 */}
             <header className="flex items-center justify-between px-4 py-4">
                 <h1 className="text-2xl font-bold text-pink-400">MOSH</h1>
-                <button className="p-2">
+                <button className="p-2" onClick={() => router.push('/home/alarm')}>
                     <FontAwesomeIcon icon={faBell} className="text-2xl" />
                 </button>
             </header>
