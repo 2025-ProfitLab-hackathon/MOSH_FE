@@ -1,4 +1,3 @@
-import BlackStarIcon from '@/public/order/black-star.svg';
 import Image from 'next/image';
 
 type ReviewCardProps = {
@@ -18,7 +17,13 @@ export default function ReviewCard({
     <div className="flex w-[260px] shrink-0 overflow-hidden rounded-xl border border-color-gray-200 bg-white">
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-center gap-2">
-          <BlackStarIcon />
+          <Image
+            src="/order/black-star.svg"
+            alt="BlackStar image"
+            width={16}
+            height={16}
+            className="object-cover rounded-r-xl"
+          />
           <span className="text-caption-M-semibold">{rating}</span>
           <span className="h-4 w-px bg-[var(--color-gray-300)]"></span>
           <span className="text-caption-M-medium text-[var(--color-gray-700)]">
