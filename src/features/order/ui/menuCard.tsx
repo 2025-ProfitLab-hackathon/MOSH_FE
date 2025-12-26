@@ -10,7 +10,8 @@ type MenuCardProps = {
 
 export default function MenuCard({ menu }: MenuCardProps) {
   const { items, addItem, removeItem } = useBasketStore();
-  const count: number = items[menu.menuId] || 0;
+  const basketItem = items[menu.menuId];
+  const count = basketItem?.count || 0;
 
   return (
     <div className="flex items-center justify-between p-4">
@@ -32,7 +33,7 @@ export default function MenuCard({ menu }: MenuCardProps) {
           -
         </button>
         <div className="px-3 py-1 bg-white">{count}</div>
-        <button className="px-2 py-1" onClick={() => addItem(menu.menuId)}>
+        <button className="px-2 py-1" onClick={() => addItem(menu)}>
           +
         </button>
       </div>
