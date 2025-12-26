@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import BottomNav from "@/src/shared/ui/BottomNav";
+import { usePushNotification } from "@/src/shared/hooks/usePushNotification";
 
 const MyPageDetailForm = () => {
     const router = useRouter();
+    const { token, isSupported, requestPermission } = usePushNotification();
     
     // 폼 상태
     const [name, setName] = useState('김모쉬');
@@ -19,6 +21,18 @@ const MyPageDetailForm = () => {
     const [pickupNotification, setPickupNotification] = useState(true);
     const [showNotification, setShowNotification] = useState(true);
     const [marketingNotification, setMarketingNotification] = useState(false);
+
+    // 전체 알림 토글 시 권한 요청
+    const handleAllNotificationToggle = async (value: boolean) => {
+        if (value && !token) {
+            const newToken = await requestPermission();
+            if (newToken) {
+                setAllNotification(true);
+            }
+        } else {
+            setAllNotification(value);
+        }
+    };
 
     const handleSave = () => {
         // 저장 로직
@@ -160,7 +174,7 @@ const MyPageDetailForm = () => {
                 {/* 전체 알림 */}
                 <div className="flex items-center justify-between py-3 border-b border-gray-100">
                     <span className="text-sm font-medium">전체 알림</span>
-                    <Toggle checked={allNotification} onChange={setAllNotification} />
+                    <Toggle checked={allNotification} onChange={handleAllNotificationToggle} />
                 </div>
 
                 {/* 앱 정보 알림 */}
