@@ -8,12 +8,10 @@ import { menus } from '@/src/mocks/menu';
 import BottomNav from '@/src/shared/ui/BottomNav';
 import { faAngleRight, faVolumeLow } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function OrderPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const boothId = searchParams.get('boothId');
 
   return (
     <>
