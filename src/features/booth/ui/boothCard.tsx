@@ -46,7 +46,9 @@ export default function BoothCard({ booth }: BoothCardProps) {
         onClick={() => handleMoveOrder(3)}
         className="flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-full bg-[var(--color-pink-400)]"
       >
-        <RightIcon />
+        <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+          <path d="M1 1L7 7L1 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ const BottomNav = () => {
         },
         {
             // name: '주문내역',
-            path: '/orders',
+            path: '/booth',
             icon: (active: boolean) => (
                 <FontAwesomeIcon icon={faReceipt} className="text-xl" />
             ),
