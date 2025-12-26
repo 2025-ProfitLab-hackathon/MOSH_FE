@@ -7,10 +7,16 @@ import AgreementModal from './AgreementModal';
 
 
 const LoginForm = () => {
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // 전화번호 입력 여부 확인
+    const isValid = phoneNumber.length > 0;
+
     const handleLoginClick = () => {
-        setIsModalOpen(true);
+        if (isValid) {
+            setIsModalOpen(true);
+        }
     };
 
     const handleAgree = () => {
@@ -24,11 +30,22 @@ const LoginForm = () => {
             <div className="h-[160px]"></div>
             <div className="text-pink-400 font-bold text-[48px]">MOSH</div>
             <div className="h-[60px]"></div>
-            <Input type="text" placeholder="핸드폰 번호를 입력해주세요." className="h-[52px] w-full"/>
+            <Input 
+                type="tel" 
+                placeholder="핸드폰 번호를 입력해주세요." 
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="h-[52px] w-full"
+            />
             <div className="h-[10px]"></div>
             <Button 
-                className="bg-pink-400 text-white w-full my-2 h-[52px] mb-10"
+                className={`w-full my-2 h-[52px] mb-10 ${
+                    isValid 
+                        ? 'bg-pink-400 hover:bg-pink-500 text-white' 
+                        : 'bg-gray-400 text-gray-800 cursor-not-allowed'
+                }`}
                 onClick={handleLoginClick}
+                disabled={!isValid}
             >
                 가입하기
             </Button>
