@@ -57,7 +57,7 @@ export default function ReviewSlider({ reviews = [] }: ReviewSliderProps) {
             name={`리뷰어`}
             rating={review.rating}
             content={review.content}
-            image={review.imageUrl}
+            image={review.imageUrl || ''}
           />
         ))}
       </div>
