@@ -16,7 +16,7 @@ const BottomNav = () => {
     const navItems = [
         {
             // name: '홈',
-            path: '/',
+            path: '/home',
             icon: (active: boolean) => (
                 <FontAwesomeIcon icon={faHouse} className="text-xl " />
             ),
