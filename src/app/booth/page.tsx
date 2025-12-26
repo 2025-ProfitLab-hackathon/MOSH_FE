@@ -1,7 +1,9 @@
+import BoothCard from '@/src/features/booth/ui/boothCard';
+
 export default function BoothPage() {
   return (
     <>
-      <div className="text-heading-S-medium">BoothPage</div>
+      <BoothCard />
     </>
   );
 }
