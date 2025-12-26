@@ -1,24 +1,115 @@
 'use client';
 
-import {Badge} from '@/components/ui/badge';
+import { Suspense } from 'react';
 import MenuCard from '@/src/features/order/ui/menuCard';
 import {OrderDrawerButton} from '@/src/features/order/ui/orderDrawerButton';
 import ReviewSlider from '@/src/features/order/ui/reviewSlider';
-import {booth} from '@/src/mocks/booth';
-import {menus} from '@/src/mocks/menu';
-import {BOOTH_TYPE_LABEL} from '@/src/shared/constants/boothType';
-import Image from 'next/image';
 import {useSearchParams, useRouter} from 'next/navigation';
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BottomNav from "@/src/shared/ui/BottomNav";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleRight, faVolumeLow} from "@fortawesome/free-solid-svg-icons";
+import { boothApi, menuApi, BoothResponse, MenuResponse, ReviewResponse } from '@/src/lib/api';
+import { useBasketStore } from '@/src/shared/store/useBasketStore';
 
+// 로딩 컴포넌트
+function OrderPageLoading() {
+    return (
+        <div className="min-h-screen flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-400"></div>
+        </div>
+    );
+}
 
-export default function OrderPage() {
+// 실제 컨텐츠 컴포넌트
+function OrderPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const boothId = searchParams.get('boothId');
+    
+    const { setBoothInfo, clearBasket } = useBasketStore();
+    
+    const [booth, setBooth] = useState<BoothResponse | null>(null);
+    const [menus, setMenus] = useState<MenuResponse[]>([]);
+    const [reviews, setReviews] = useState<ReviewResponse[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // 부스 상세 및 메뉴 조회
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!boothId) {
+                setError('부스 정보가 없습니다.');
+                setLoading(false);
+                return;
+            }
+
+            try {
+                setLoading(true);
+                setError(null);
+                
+                // 부스 상세 조회
+                const boothData = await boothApi.getById(Number(boothId));
+                setBooth(boothData);
+                setBoothInfo(boothData.boothId, boothData.title);
+                
+                // 메뉴 목록 조회
+                const menuData = await boothApi.getMenus(Number(boothId));
+                setMenus(menuData.items);
+                
+                // 첫 번째 메뉴의 리뷰 조회 (대표 리뷰)
+                if (menuData.items.length > 0) {
+                    try {
+                        const reviewData = await menuApi.getReviews(menuData.items[0].menuId, { size: 10 });
+                        setReviews(reviewData.content);
+                    } catch {
+                        // 리뷰 조회 실패해도 무시
+                    }
+                }
+                
+            } catch (err: unknown) {
+                console.error('데이터 조회 실패:', err);
+                const errorMessage = err instanceof Error ? err.message : '데이터를 불러오는데 실패했습니다.';
+                setError(errorMessage);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        // 페이지 진입 시 장바구니 초기화
+        clearBasket();
+        fetchData();
+    }, [boothId, clearBasket, setBoothInfo]);
+
+    // 시간 포맷팅
+    const formatTime = (dateStr: string) => {
+        try {
+            const date = new Date(dateStr);
+            return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+        } catch {
+            return dateStr;
+        }
+    };
+
+    // 로딩 상태
+    if (loading) {
+        return <OrderPageLoading />;
+    }
+
+    // 에러 상태
+    if (error || !booth) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center px-4">
+                <p className="text-red-500 mb-4">{error || '부스를 찾을 수 없습니다.'}</p>
+                <button 
+                    onClick={() => router.back()}
+                    className="px-6 py-3 bg-pink-400 text-white rounded-full"
+                >
+                    돌아가기
+                </button>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -42,11 +133,16 @@ export default function OrderPage() {
                         <div className="flex flex-col gap-1 text-sm text-gray-600">
                             <div className="flex gap-2">
                                 <span className="text-gray-500">시간</span>
-                                <span>{booth.startAt} ~ {booth.endAt}</span>
+                                <span>{formatTime(booth.startAt)} ~ {formatTime(booth.endAt)}</span>
                             </div>
                             <div className="flex gap-2">
                                 <span className="text-gray-500">장소</span>
                                 <span>{booth.place}</span>
+                            </div>
+                            <div className="flex gap-2 items-center">
+                                <span className="text-yellow-500">★</span>
+                                <span>{booth.avgReviewRating.toFixed(1)}</span>
+                                <span className="text-gray-400">({booth.totalReviewCount})</span>
                             </div>
                         </div>
                     </div>
@@ -83,7 +179,7 @@ export default function OrderPage() {
                 {/* 리뷰 슬라이더 */}
                 <div className="mt-4 -mx-4">
                     <div className="pl-4 overflow-hidden">
-                        <ReviewSlider/>
+                        <ReviewSlider reviews={reviews} />
                     </div>
                 </div>
 
@@ -93,16 +189,31 @@ export default function OrderPage() {
                 {/* 메뉴 섹션 */}
                 <div className="mt-4">
                     <h2 className="text-lg font-bold mb-4">메뉴</h2>
-                    {menus.items.map((menu) => (
-                        <MenuCard key={menu.menuId} menu={menu}/>
-                    ))}
+                    {menus.length === 0 ? (
+                        <div className="text-center py-8 text-gray-500">
+                            등록된 메뉴가 없습니다.
+                        </div>
+                    ) : (
+                        menus.map((menu) => (
+                            <MenuCard key={menu.menuId} menu={menu}/>
+                        ))
+                    )}
                 </div>
             </div>
 
             {/* 주문하기 버튼 - 하단 고정 */}
-            <OrderDrawerButton title={booth.title}/>
+            <OrderDrawerButton boothId={booth.boothId} title={booth.title}/>
 
             <BottomNav/>
         </>
+    );
+}
+
+// 메인 페이지 - Suspense로 감싸기
+export default function OrderPage() {
+    return (
+        <Suspense fallback={<OrderPageLoading />}>
+            <OrderPageContent />
+        </Suspense>
     );
 }

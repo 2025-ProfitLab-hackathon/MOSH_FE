@@ -1,6 +1,6 @@
 'use client';
 
-import { reviews } from '@/src/mocks/reviews';
+import { ReviewResponse } from '@/src/lib/api';
 import { useRef, useState } from 'react';
 import ReviewCard from './reviewCard';
 
@@ -8,7 +8,11 @@ const CARD_WIDTH = 260;
 const GAP = 12;
 const MOVE_DISTANCE = CARD_WIDTH + GAP;
 
-export default function ReviewSlider() {
+interface ReviewSliderProps {
+  reviews?: ReviewResponse[];
+}
+
+export default function ReviewSlider({ reviews = [] }: ReviewSliderProps) {
   const [current, setCurrent] = useState(0);
   const startX = useRef(0);
 
@@ -29,6 +33,14 @@ export default function ReviewSlider() {
     }
   };
 
+  if (reviews.length === 0) {
+    return (
+      <div className="text-center py-4 text-gray-500 text-sm">
+        아직 리뷰가 없습니다.
+      </div>
+    );
+  }
+
   return (
     <div className="overflow-hidden">
       <div
@@ -41,11 +53,11 @@ export default function ReviewSlider() {
       >
         {reviews.map((review) => (
           <ReviewCard
-            key={review.id}
-            name={review.name}
+            key={review.reviewId}
+            name={`리뷰어`}
             rating={review.rating}
             content={review.content}
-            image={review.image}
+            image={review.imageUrl}
           />
         ))}
       </div>
